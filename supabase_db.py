@@ -306,19 +306,25 @@ def get_bets_by_state(state):
         List of bet dictionaries
     """
     # Base query with essential fields
-    bets = supabase.table("bets").select(
-        "bet_id, created_by_user_id, title, description, answer_type, correct_answer, "
-        "is_open, is_resolved, is_closed, created_at, close_at, resolved_at"
-    )
+    """Filter bets by proper lifecycle state logic."""
+    base = (supabase.table('bets')
+            .select('bet_id, created_by_user_id, title, description, answer_type, '
+                   'correct_answer, is_open, is_resolved, is_closed, created_at, '
+                   'close_at, resolved_at'))
     
-    if state == "open":
-        res = bets.eq("is_closed", False).eq("is_resolved", False).execute()
-    elif state == "closed":
-        res = bets.eq("is_closed", True).eq("is_resolved", False).execute()
-    elif state == "resolved":
-        res = bets.eq("is_resolved", True).execute()
-    else:  # All bets
-        res = bets.execute()
+    now_utc = 'now()'  # Current UTC time
+    
+    if state == 'open':
+        # OPEN: accepting predictions (is_open=TRUE)
+        res = base.eq('is_open', True).execute()
+    elif state == 'closed':
+        # CLOSED: closed but not resolved (is_closed=TRUE AND is_resolved=FALSE)
+        res = base.eq('is_closed', True).eq('is_resolved', False).execute()
+    elif state == 'resolved':
+        # RESOLVED: final state (is_resolved=TRUE)
+        res = base.eq('is_resolved', True).execute()
+    else:  # 'all'
+        res = base.execute()
     
     return res.data
 
