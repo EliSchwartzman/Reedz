@@ -442,7 +442,7 @@ def profile_panel(user):
     if user_db:
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Username", user_db.username, delta=None)
+            st.subheader("Username", user_db.username)
             st.metric("Email", user_db.email, delta=None)
         with col2:
             st.metric("Reedz Balance", f"{user_db.reedz_balance:,}", delta=None)
