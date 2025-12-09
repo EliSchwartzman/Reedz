@@ -458,8 +458,8 @@ def main_panel():
     user = st.session_state.user
     
     # Sidebar: User info + navigation
-    st.sidebar.info(f"Username: {user.username}")
-    st.sidebar.info(f"Role: {user.role}")
+    st.sidebar.title("Profile")
+    st.sidebar.info(f"Username: {user.username}\nEmail: {user.email}\nRole: {user.role}")
     st.sidebar.divider()
     
     # Role-based page menu
