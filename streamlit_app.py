@@ -459,8 +459,8 @@ def main_panel():
     
     # Sidebar: User info + navigation
     st.sidebar.title("Profile")
-    st.sidebar.info(f"Username: {user.username}")
-    st.sidebar.info(f"Role: {user.role}")
+    st.sidebar.radio(f"Username: {user.username}")
+    st.sidebar.radio(f"Role: {user.role}")
     st.sidebar.divider()
     
     # Role-based page menu
