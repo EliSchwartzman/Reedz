@@ -1,7 +1,8 @@
 import streamlit as st  # Web framework for interactive data apps
 import re               # Regular expressions for username validation
-from models import User  # Data models (User, Bet, Prediction)
+from models import User # Data models (User, Bet, Prediction)
 from auth import hash_password, authenticate, is_admin  # Authentication utilities
+import supabase         # Supabase client instance
 import supabase_db      # Supabase database operations layer
 from betting import create_bet, close_bet, resolve_bet, place_prediction, get_bet_overview  # Betting operations
 from datetime import datetime, timedelta  # Date/time calculations
@@ -433,24 +434,27 @@ def user_management_panel():
                 st.error(f"{e}")
     
     elif action == "Season Reset":
+        """Admin-only: Reset all bets, predictions, and balances for new season."""
         st.warning("⚠️ **SEASON RESET**: Deletes ALL bets + predictions. Users + accounts preserved.")
+        st.info("All user balances reset to 0. New season starts fresh.")
         
-        if st.button("CONFIRM SEASON RESET", type="primary"):
+        if st.button("🔄 CONFIRM SEASON RESET", type="primary"):
             try:
                 # 1. Delete predictions first (child table - FK safe)
-                supabase_db.table('predictions').delete().execute()
+                supabase.table('predictions').delete().execute()  # ✅ Direct supabase
                 
                 # 2. Delete bets (depends on predictions)
-                supabase_db.table('bets').delete().execute()
+                supabase.table('bets').delete().execute()         # ✅ Direct supabase
                 
                 # 3. Reset all user balances to 0 (preserve user accounts)
-                supabase_db.table('users').update({'reedz_balance': 0}).execute()
+                supabase.table('users').update({'reedz_balance': 0}).execute()  # ✅ Direct supabase
                 
                 st.success("✅ **Season reset complete!** All bets, predictions, and balances cleared.")
-                st.balloons()  # 🎉 Celebration effect
-                st.rerun()     # Refresh UI
+                st.balloons()
+                st.rerun()
             except Exception as e:
                 st.error(f"❌ Reset failed: {e}")
+
 
 
 
