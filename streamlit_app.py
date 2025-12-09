@@ -482,7 +482,7 @@ def main_panel():
     user = st.session_state.user
     
     # Sidebar: User info + navigation
-    st.sidebar.title("Profile")
+    st.sidebar.title("Welcome to Reedz!")
     st.sidebar.subheader(f"Username: {user.username}")
     st.sidebar.subheader(f"Role: {user.role}")
     st.sidebar.divider()
