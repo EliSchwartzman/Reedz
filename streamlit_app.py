@@ -459,7 +459,10 @@ def main_panel():
     
     # Sidebar: User info + navigation
     st.sidebar.title("Profile")
-    st.sidebar.info(f"Username: {user.username}\nEmail: {user.email}\nRole: {user.role}")
+    st.sidebar.subheader(f"Username: {user.username}")
+    st.sidebar.text(f"Role: {user.role}")
+    st.sidebar.text(f"Reedz Balance: {user.reedz_balance:,}")
+    st.sidebar.caption(f"Member since {timestamper.format_et(user.created_at)}")
     st.sidebar.divider()
     
     # Role-based page menu
@@ -470,7 +473,7 @@ def main_panel():
     else:
         pages = base_pages
     
-    page = st.sidebar.radio("Navigate", pages)
+    page = st.sidebar.title("Navigate", pages)
     
     # Route to selected page
     page_map = {
