@@ -448,10 +448,8 @@ def user_management_panel():
                 st.error(f"{e}")
     
     elif action == "Season Reset":
-        st.warning("⚠️ **SEASON RESET**: Deletes ALL bets + predictions. Users preserved.")
-        st.info("All balances reset to 0. Perfect for new seasons.")
-        
-        if st.button("🔄 CONFIRM SEASON RESET", type="primary"):
+        st.warning("**SEASON RESET**: Deletes ALL bets + predictions. Users preserved.")       
+        if st.button("CONFIRM SEASON RESET", type="primary"):
             with st.spinner("Resetting season..."):
                 try:
                     # 1. Delete predictions
@@ -463,7 +461,7 @@ def user_management_panel():
                     # 3. Reset balances
                     supabase.table('users').update({'reedz_balance': 0}).neq('user_id', -1).execute()
                     
-                    st.success("✅ **Season reset complete!** Fresh start.")
+                    st.success("**Season reset complete!**")
                     st.balloons()
                     
                     # Show success for 2 seconds, THEN refresh
@@ -471,7 +469,7 @@ def user_management_panel():
                     st.rerun()
                     
                 except Exception as e:
-                    st.error(f"❌ Reset failed: {e}")
+                    st.error(f"Reset failed: {e}")
 
 
 
