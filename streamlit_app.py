@@ -462,7 +462,6 @@ def main_panel():
     st.sidebar.subheader(f"Username: {user.username}")
     st.sidebar.text(f"Role: {user.role}")
     st.sidebar.text(f"Reedz Balance: {user.reedz_balance:,}")
-    st.sidebar.caption(f"Member since {timestamper.format_et(user.created_at)}")
     st.sidebar.divider()
     
     # Role-based page menu
