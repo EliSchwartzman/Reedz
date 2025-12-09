@@ -255,23 +255,45 @@ def bets_panel():
 
 def predictions_panel():
     """View all predictions for a selected bet."""
-    st.subheader("Bet Predictions")
-    all_bets = (get_bet_overview("open") + get_bet_overview("closed") + 
+    st.subheader("View Predictions for a Bet")  # Biggest header
+    
+    all_bets = (get_bet_overview("open") + 
+                get_bet_overview("closed") + 
                 get_bet_overview("resolved"))
     
     if not all_bets:
         st.info("No bets available")
         return
     
-    # Create user-friendly bet dropdown
-    bet_titles = {}
-    for b in all_bets:
-        status = ("Open" if not b.get('is_closed') and not b.get('is_resolved') else
-                 "Closed" if b.get('is_closed') else "Resolved")
-        bet_titles[f"ID {b['bet_id']} - {b['title']} ({status})"] = b['bet_id']
+    # Group bets by status with BIG headers
+    open_bets = [b for b in all_bets if not b.get('is_closed') and not b.get('is_resolved')]
+    closed_bets = [b for b in all_bets if b.get('is_closed') and not b.get('is_resolved')]
+    resolved_bets = [b for b in all_bets if b.get('is_resolved')]
     
-    selected = st.selectbox("Select Bet", list(bet_titles.keys()))
-    if selected:
+    bet_titles = {}
+    options = []
+    
+    # OPEN BETS - BIG header
+    if open_bets:
+        options.append("OPEN BETS")
+        for b in open_bets:
+            bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+    
+    # CLOSED BETS - BIG header
+    if closed_bets:
+        options.append("CLOSED BETS")
+        for b in closed_bets:
+            bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+    
+    # RESOLVED BETS - BIG header
+    if resolved_bets:
+        options.append("RESOLVED BETS")
+        for b in resolved_bets:
+            bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+    
+    selected = st.selectbox("Select Bet", options if options else ["No bets available"])
+    
+    if selected and selected not in ["OPEN BETS", "CLOSED BETS", "RESOLVED BETS"]:
         bet_id = bet_titles[selected]
         predictions = supabase_db.get_predictions_for_bet(bet_id)
         
@@ -280,19 +302,20 @@ def predictions_panel():
             user_cache = {}
             pred_data = []
             for p in predictions:
-                user_id = p.user_id  # Prediction object attribute access
+                user_id = p['user_id']  # Fixed: dict access
                 if user_id not in user_cache:
                     user = supabase_db.get_user_by_id(user_id)
                     user_cache[user_id] = user.username if user else f"ID {user_id}"
                 
                 pred_data.append({
                     "User": user_cache[user_id],
-                    "Prediction": p.prediction,
-                    "Created": timestamper.format_et(p.created_at)
+                    "Prediction": p['prediction'],  # Fixed: dict access
+                    "Created": timestamper.format_et(p['created_at'])  # Fixed: dict access
                 })
             st.dataframe(pred_data, use_container_width=True)
         else:
             st.info("No predictions for this bet")
+
 
 
 # ADMIN PANELS (Role-protected)
@@ -448,7 +471,7 @@ def user_management_panel():
                 st.error(f"{e}")
     
     elif action == "Season Reset":
-        st.warning("**SEASON RESET**: Deletes ALL bets + predictions. Users preserved.")       
+        st.warning("**SEASON RESET**: Deletes ALL bets + predictions. Users preserved. This operation is irreversible.")       
         if st.button("CONFIRM SEASON RESET", type="primary"):
             with st.spinner("Resetting season..."):
                 try:
