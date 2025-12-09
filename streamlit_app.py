@@ -442,11 +442,11 @@ def profile_panel(user):
     if user_db:
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Username", user_db.username)
-            st.metric("Email", user_db.email, delta=None)
+            st.markdown(f"**Username:** {user_db.username}")
+            st.markdown(f"**Email:** {user_db.email}")
         with col2:
-            st.metric("Reedz Balance", f"{user_db.reedz_balance:,}", delta=None)
-            st.metric("Role", user_db.role, delta=None)
+            st.markdown(f"**Reedz Balance:** {user_db.reedz_balance:,}")
+            st.markdown(f"**Role:** {user_db.role}")
         
         st.caption(f"Member since {timestamper.format_et(user_db.created_at)}")
     else:
