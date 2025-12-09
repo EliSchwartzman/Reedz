@@ -490,6 +490,12 @@ def main_panel():
         "Resolve Bet": lambda: resolve_bet_panel(user),
         "User Management": user_management_panel
     }
+
+    if page in page_map:
+        page_map[page]()
+    else:
+       st.error(f"Unknown page: {page}")
+
     
     # Logout button
     st.sidebar.divider()
