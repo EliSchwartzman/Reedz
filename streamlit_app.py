@@ -3,6 +3,7 @@ import re               # Regular expressions for username validation
 from models import User # Data models (User, Bet, Prediction)
 from auth import hash_password, authenticate, is_admin  # Authentication utilities
 import supabase         # Supabase client instance
+from supabase import create_client, Client  # Supabase client creation
 import supabase_db      # Supabase database operations layer
 from betting import create_bet, close_bet, resolve_bet, place_prediction, get_bet_overview  # Betting operations
 from datetime import datetime, timedelta  # Date/time calculations
@@ -16,7 +17,15 @@ from email_sender import send_password_reset_email  # SMTP email utilities
 
 # Load secure configuration from environment variables
 load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 ADMIN_CODE = os.getenv("ADMIN_CODE")  # Secret code for admin privileges
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    st.error("SUPABASE_URL and SUPABASE_KEY must be set in environment variables.")
+    st.stop()
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 
 # Configure Streamlit page (wide layout for better UX)
@@ -371,7 +380,7 @@ def resolve_bet_panel(user):
 
 
 def user_management_panel():
-    """Admin: Full user CRUD operations."""
+    """Admin: Full user CRUD operations + Season Reset."""
     st.subheader("User Management")
     action = st.radio("Action", ["List users", "Promote/Demote", "Change Reedz", "Delete user", "Season Reset"])
     
@@ -395,15 +404,17 @@ def user_management_panel():
                 try:
                     supabase_db.change_role(uid, new_role)
                     st.success("Role updated")
+                    st.rerun()
                 except Exception as e:
                     st.error(f"{e}")
-            elif admin_code != ADMIN_CODE:
+            elif admin_code != ADMIN_CODE and st.button("Update Role"):
                 st.error("Wrong admin code")
         else:
             if st.button("Update Role"):
                 try:
                     supabase_db.change_role(uid, new_role)
                     st.success("Role updated")
+                    st.rerun()
                 except Exception as e:
                     st.error(f"{e}")
     
@@ -418,6 +429,7 @@ def user_management_panel():
             try:
                 supabase_db.add_reedz(user_data['user_id'], delta)
                 st.success("Balance updated")
+                st.rerun()
             except Exception as e:
                 st.error(f"{e}")
     
@@ -430,28 +442,32 @@ def user_management_panel():
             try:
                 supabase_db.delete_user(uid)
                 st.success("User deleted")
+                st.rerun()
             except Exception as e:
                 st.error(f"{e}")
     
     elif action == "Season Reset":
-        st.warning("⚠️ **SEASON RESET**: Deletes ALL bets and predictions. Users and accounts preserved. This action is irreversible.")
-                
+        """Admin-only: Reset all bets, predictions, and balances for new season."""
+        st.warning("⚠️ **SEASON RESET**: Deletes ALL bets + predictions. Users preserved.")
+        st.info("All balances reset to 0. Perfect for new seasons.")
+        
         if st.button("🔄 CONFIRM SEASON RESET", type="primary"):
             try:
                 # 1. Delete predictions first (child table - FK safe)
-                supabase.table('predictions').delete().execute()  # ✅ Direct supabase
+                supabase.table('predictions').delete().execute()
                 
-                # 2. Delete bets (depends on predictions)
-                supabase.table('bets').delete().execute()         # ✅ Direct supabase
+                # 2. Delete bets
+                supabase.table('bets').delete().execute()
                 
-                # 3. Reset all user balances to 0 (preserve user accounts)
-                supabase.table('users').update({'reedz_balance': 0}).execute()  # ✅ Direct supabase
+                # 3. Reset all balances to 0 (preserve users)
+                supabase.table('users').update({'reedz_balance': 0}).execute()
                 
-                st.success("✅ **Season reset complete!** All bets, predictions, and balances cleared.")
+                st.success("✅ **Season reset complete!** Fresh start.")
                 st.balloons()
                 st.rerun()
             except Exception as e:
                 st.error(f"❌ Reset failed: {e}")
+
 
 
 
