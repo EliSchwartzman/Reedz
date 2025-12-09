@@ -488,7 +488,12 @@ def main_panel():
     }
 
     if page in page_map:
-        page_map[page]()
+        try:
+            if page in page_map:
+                page_map[page]()
+        except Exception as e:
+            st.error(f"Error in {page}: {e}")
+            st.exception(e)
     
     # Logout button
     st.sidebar.divider()
