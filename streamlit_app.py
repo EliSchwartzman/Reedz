@@ -471,8 +471,9 @@ def main_panel():
     else:
         pages = base_pages
     
-    page = st.sidebar.radio.subheader("Navigation", pages)
-    
+    st.sidebar.subheader("Navigation")  # Header first
+    page = st.sidebar.radio("", pages)  # Empty label radio
+
     # Route to selected page
     page_map = {
         "My Profile": profile_panel,
@@ -485,7 +486,7 @@ def main_panel():
         "Resolve Bet": lambda: resolve_bet_panel(user),
         "User Management": user_management_panel
     }
-    
+
     if page in page_map:
         page_map[page]()
     
