@@ -329,22 +329,27 @@ def get_bet_overview(state):
 
 
 def close_bet(bet_id):
-    """Marks bet as closed (stops predictions)."""
-    res = supabase.table("bets").update({
-        "is_open": False, 
-        "is_closed": True
-    }).eq("bet_id", bet_id).execute()
+    """Close bet: stop predictions, mark as closed but unresolved."""
+    res = (supabase.table('bets')
+           .update({'is_open': False, 'is_closed': True})
+           .eq('bet_id', bet_id)
+           .eq('is_resolved', False)  # Only close unresolved bets
+           .execute())
     return res
-
 
 def resolve_bet(bet_id, correct_answer):
-    """Sets official answer (triggers scoring)."""
-    res = supabase.table("bets").update({
-        "is_resolved": True,
-        "correct_answer": correct_answer
-    }).eq("bet_id", bet_id).execute()
+    """Resolve bet: set answer + mark fully resolved."""
+    res = (supabase.table('bets')
+           .update({
+               'is_open': False,           # No more predictions
+               'is_closed': True,          # Closed state  
+               'is_resolved': True,        # Final state
+               'correct_answer': correct_answer,
+               'resolved_at': 'now()'      # Timestamp
+           })
+           .eq('bet_id', bet_id)
+           .execute())
     return res
-
 # PREDICTION OPERATIONS
 
 def create_prediction(prediction: Prediction):
