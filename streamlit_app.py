@@ -459,9 +459,13 @@ def profile_panel(user):
             for p in predictions:
                 bet = supabase_db.get_bet(p['bet_id'])
                 bet_title = bet.title if bet else f"Bet #{p['bet_id']}"
+                correct_answer = (bet.correct_answer if bet and bet.is_resolved and bet.correct_answer 
+                                else "Bet has not been resolved yet")
+                
                 pred_data.append({
                     "Bet": bet_title,
                     "Prediction": p['prediction'],
+                    "Correct Answer": correct_answer,
                     "Date": timestamper.format_et(p['created_at'])
                 })
             
@@ -470,9 +474,6 @@ def profile_panel(user):
             st.info("No predictions yet")
     else:
         st.error("Profile not found")
-
-
-
 
 # MAIN APPLICATION LAYOUT
 
