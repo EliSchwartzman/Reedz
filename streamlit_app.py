@@ -477,7 +477,7 @@ def main_panel():
     # Route to selected page
     page_map = {
         "My Profile": profile_panel,
-        "Leaderboard": leaderboard_panel,
+        "Leaderboard": leaderboard_panel, 
         "All Bets": bets_panel,
         "Place Prediction": lambda: place_prediction_panel(user),
         "View Predictions for a Bet": predictions_panel,
@@ -487,13 +487,16 @@ def main_panel():
         "User Management": user_management_panel
     }
 
-    if page in page_map:
-        try:
-            if page in page_map:
-                page_map[page]()
-        except Exception as e:
-            st.error(f"Error in {page}: {e}")
-            st.exception(e)
+    st.write(f"🔍 DEBUG: Loading page '{page}'")  # Shows which page
+
+    try:
+        if page in page_map:
+            page_map[page]()
+        else:
+            st.error(f"Unknown page: {page}")
+    except Exception as e:
+        st.error(f"❌ CRASH in '{page}': {str(e)[:200]}")
+        st.exception(e)
     
     # Logout button
     st.sidebar.divider()
