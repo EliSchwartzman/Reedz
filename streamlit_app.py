@@ -228,7 +228,7 @@ def bets_panel():
     closed_bets = get_bet_overview("closed")
     resolved_bets = get_bet_overview("resolved")
         
-    with st.expander(st.markdown("**Open Bets (Accepting Predictions)**"), expanded=True):
+    with st.expander("**Open Bets (Accepting Predictions)**", expanded=True):
         if open_bets:
             for bet in open_bets:
                 st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**  "
