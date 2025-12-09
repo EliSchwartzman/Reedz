@@ -449,6 +449,25 @@ def profile_panel(user):
             st.markdown(f"**Role:** {user_db.role}")
         
         st.caption(f"Member since {timestamper.format_et(user_db.created_at)}")
+        
+        # Prediction History
+        st.subheader("Prediction History")
+        predictions = supabase_db.get_user_predictions(user.user_id)
+        
+        if predictions:
+            pred_data = []
+            for p in predictions:
+                bet = supabase_db.get_bet(p['bet_id'])
+                bet_title = bet.title if bet else f"Bet #{p['bet_id']}"
+                pred_data.append({
+                    "Bet": bet_title,
+                    "Prediction": p['prediction'],
+                    "Date": timestamper.format_et(p['created_at'])
+                })
+            
+            st.dataframe(pred_data, use_container_width=True)
+        else:
+            st.info("No predictions yet")
     else:
         st.error("Profile not found")
 
