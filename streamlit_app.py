@@ -490,17 +490,6 @@ def main_panel():
         "Resolve Bet": lambda: resolve_bet_panel(user),
         "User Management": user_management_panel
     }
-
-    st.write(f"🔍 DEBUG: Loading page '{page}'")  # Shows which page
-
-    try:
-        if page in page_map:
-            page_map[page]()
-        else:
-            st.error(f"Unknown page: {page}")
-    except Exception as e:
-        st.error(f"❌ CRASH in '{page}': {str(e)[:200]}")
-        st.exception(e)
     
     # Logout button
     st.sidebar.divider()
