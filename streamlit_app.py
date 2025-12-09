@@ -472,7 +472,7 @@ def main_panel():
     else:
         pages = base_pages
     
-    page = st.sidebar.subheader("Navigate", pages)
+    page = st.sidebar.text("Navigation", pages)
     
     # Route to selected page
     page_map = {
