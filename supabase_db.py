@@ -1,4 +1,4 @@
-import os                           # Environment variable access
+import os  # Environment variable access
 from datetime import datetime, timedelta, timezone  # Date/time handling with timezone support
 from dotenv import load_dotenv      # Load .env configuration file
 from supabase import create_client, Client  # Official Supabase Python client
