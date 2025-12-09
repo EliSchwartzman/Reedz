@@ -372,7 +372,7 @@ def resolve_bet_panel(user):
 def user_management_panel():
     """Admin: Full user CRUD operations."""
     st.subheader("User Management")
-    action = st.radio("Action", ["List users", "Promote/Demote", "Change Reedz", "Delete user"])
+    action = st.radio("Action", ["List users", "Promote/Demote", "Change Reedz", "Delete user", "Season Reset"])
     
     users = supabase_db.list_all_users()
     
@@ -431,6 +431,29 @@ def user_management_panel():
                 st.success("User deleted")
             except Exception as e:
                 st.error(f"{e}")
+    
+    elif action == "Season Reset":
+        """Admin-only: Reset all bets, predictions, and balances for new season."""
+        st.warning("⚠️ **SEASON RESET**: Deletes ALL bets + predictions. Users + accounts preserved.")
+        st.info("All user balances reset to 0. New season starts fresh.")
+        
+        if st.button("🔄 CONFIRM SEASON RESET", type="primary"):
+            try:
+                # 1. Delete predictions first (child table - FK safe)
+                supabase_db.table('predictions').delete().execute()
+                
+                # 2. Delete bets (depends on predictions)
+                supabase_db.table('bets').delete().execute()
+                
+                # 3. Reset all user balances to 0 (preserve user accounts)
+                supabase_db.table('users').update({'reedz_balance': 0}).execute()
+                
+                st.success("✅ **Season reset complete!** All bets, predictions, and balances cleared.")
+                st.balloons()  # 🎉 Celebration effect
+                st.rerun()     # Refresh UI
+            except Exception as e:
+                st.error(f"❌ Reset failed: {e}")
+
 
 
 def profile_panel(user):
