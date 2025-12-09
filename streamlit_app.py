@@ -476,8 +476,8 @@ def main_panel():
 
     # Route to selected page
     page_map = {
-        "My Profile": profile_panel,
-        "Leaderboard": leaderboard_panel, 
+        "My Profile": lambda: profile_panel(user),  # ✅ Add lambda
+        "Leaderboard": leaderboard_panel,
         "All Bets": bets_panel,
         "Place Prediction": lambda: place_prediction_panel(user),
         "View Predictions for a Bet": predictions_panel,
