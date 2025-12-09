@@ -1,0 +1,9 @@
+# Core Web Framework
+streamlit==1.37.1                   # Web UI interface
+
+# Database & Backend
+supabase                             # Supabase Python client (PostgreSQL + auth)
+python-dotenv==1.0.1                 # Load environment variables from .env
+
+# Security & Authentication
+bcrypt==4.2.0                        # Secure password hashing (industry standard)
