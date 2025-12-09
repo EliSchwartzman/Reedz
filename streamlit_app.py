@@ -13,6 +13,7 @@ from dotenv import load_dotenv  # Load .env configuration
 import random           # Random number generation for reset codes
 import string           # String constants for code generation
 from email_sender import send_password_reset_email  # SMTP email utilities
+import time             # Sleep for delays in UI
 
 
 # Load secure configuration from environment variables
@@ -451,21 +452,27 @@ def user_management_panel():
         st.info("All balances reset to 0. Perfect for new seasons.")
         
         if st.button("🔄 CONFIRM SEASON RESET", type="primary"):
-            try:
-                # 1. Delete predictions (use neq for "all rows")
-                supabase.table('predictions').delete().neq('prediction_id', -1).execute()
-                
-                # 2. Delete bets
-                supabase.table('bets').delete().neq('bet_id', -1).execute()
-                
-                # 3. Reset all balances to 0
-                supabase.table('users').update({'reedz_balance': 0}).neq('user_id', -1).execute()
-                
-                st.success("✅ **Season reset complete!** Fresh start.")
-                st.balloons()
-                st.rerun()
-            except Exception as e:
-                st.error(f"❌ Reset failed: {e}")
+            with st.spinner("Resetting season..."):
+                try:
+                    # 1. Delete predictions
+                    supabase.table('predictions').delete().neq('prediction_id', -1).execute()
+                    
+                    # 2. Delete bets
+                    supabase.table('bets').delete().neq('bet_id', -1).execute()
+                    
+                    # 3. Reset balances
+                    supabase.table('users').update({'reedz_balance': 0}).neq('user_id', -1).execute()
+                    
+                    st.success("✅ **Season reset complete!** Fresh start.")
+                    st.balloons()
+                    
+                    # Show success for 2 seconds, THEN refresh
+                    time.sleep(2)
+                    st.rerun()
+                    
+                except Exception as e:
+                    st.error(f"❌ Reset failed: {e}")
+
 
 
 
