@@ -435,7 +435,8 @@ def user_management_panel():
 
 def profile_panel(user):
     """Display current user's profile information."""
-    st.subheader("My Profile")
+    st.header("👤 My Profile")  # Bigger header
+    
     user_db = supabase_db.get_user_by_id(user.user_id)
     
     if user_db:
@@ -446,9 +447,11 @@ def profile_panel(user):
         with col2:
             st.metric("Reedz Balance", f"{user_db.reedz_balance:,}")
             st.metric("Role", user_db.role)
-            st.caption(f"Member since {timestamper.format_et(user_db.created_at)}")
+        
+        st.caption(f"Member since {timestamper.format_et(user_db.created_at)}")  # Outside columns
     else:
         st.error("Profile not found")
+
 
 
 # MAIN APPLICATION LAYOUT
@@ -476,7 +479,7 @@ def main_panel():
 
     # Route to selected page
     page_map = {
-        "My Profile": lambda: profile_panel(user),  # ✅ Add lambda
+        "My Profile": lambda: profile_panel(user),
         "Leaderboard": leaderboard_panel,
         "All Bets": bets_panel,
         "Place Prediction": lambda: place_prediction_panel(user),
