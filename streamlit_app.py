@@ -227,28 +227,29 @@ def bets_panel():
     open_bets = get_bet_overview("open")
     closed_bets = get_bet_overview("closed")
     resolved_bets = get_bet_overview("resolved")
-    
-    with st.expander("Open Bets (Accepting Predictions)", expanded=True):
+        
+    with st.expander("**Open Bets (Accepting Predictions)**", expanded=True):
         if open_bets:
             for bet in open_bets:
-                st.write(f"ID {bet['bet_id']} | {bet['title']} "
-                        f"(closes {timestamper.format_et(bet['close_at'])})")
+                st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**  "
+                        f"*closes {timestamper.format_et(bet['close_at'])}*")
         else:
             st.info("No open bets")
-    
-    with st.expander("Closed Bets"):
+
+    with st.expander("**Closed Bets**"):
         if closed_bets:
             for bet in closed_bets:
-                st.write(f"ID {bet['bet_id']} | {bet['title']} "
-                        f"(closed {timestamper.format_et(bet['close_at'])})")
+                st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**  "
+                        f"*closed {timestamper.format_et(bet['close_at'])}*")
         else:
             st.info("No closed bets")
-    
-    with st.expander("Resolved Bets"):
+
+    with st.expander("**Resolved Bets**"):
         if resolved_bets:
             for bet in resolved_bets:
-                ans_str = f" | Answer: {bet.get('correct_answer', 'N/A')}"
-                st.write(f"ID {bet['bet_id']} | {bet['title']}{ans_str}")
+                ans_str = f" | **Answer: {bet.get('correct_answer', 'N/A')}**"
+                st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**{ans_str}")
+
         else:
             st.info("No resolved bets")
 
