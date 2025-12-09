@@ -447,20 +447,19 @@ def user_management_panel():
                 st.error(f"{e}")
     
     elif action == "Season Reset":
-        """Admin-only: Reset all bets, predictions, and balances for new season."""
         st.warning("⚠️ **SEASON RESET**: Deletes ALL bets + predictions. Users preserved.")
         st.info("All balances reset to 0. Perfect for new seasons.")
         
         if st.button("🔄 CONFIRM SEASON RESET", type="primary"):
             try:
-                # 1. Delete predictions first (child table - FK safe)
-                supabase.table('predictions').delete().execute()
+                # 1. Delete predictions (use neq for "all rows")
+                supabase.table('predictions').delete().neq('prediction_id', -1).execute()
                 
                 # 2. Delete bets
-                supabase.table('bets').delete().execute()
+                supabase.table('bets').delete().neq('bet_id', -1).execute()
                 
-                # 3. Reset all balances to 0 (preserve users)
-                supabase.table('users').update({'reedz_balance': 0}).execute()
+                # 3. Reset all balances to 0
+                supabase.table('users').update({'reedz_balance': 0}).neq('user_id', -1).execute()
                 
                 st.success("✅ **Season reset complete!** Fresh start.")
                 st.balloons()
