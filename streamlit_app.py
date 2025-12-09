@@ -435,22 +435,23 @@ def user_management_panel():
 
 def profile_panel(user):
     """Display current user's profile information."""
-    st.header("👤 My Profile")  # Bigger header
+    st.header("My Profile")
     
     user_db = supabase_db.get_user_by_id(user.user_id)
     
     if user_db:
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Username"), st.text(user_db.username)
-            st.subheader("Email"), st.text(user_db.email)
+            st.metric("Username", user_db.username, delta=None)
+            st.metric("Email", user_db.email, delta=None)
         with col2:
-            st.metric("Reedz Balance", f"{user_db.reedz_balance:,}")
-            st.metric("Role", user_db.role)
+            st.metric("Reedz Balance", f"{user_db.reedz_balance:,}", delta=None)
+            st.metric("Role", user_db.role, delta=None)
         
-        st.caption(f"Member since {timestamper.format_et(user_db.created_at)}")  # Outside columns
+        st.caption(f"Member since {timestamper.format_et(user_db.created_at)}")
     else:
         st.error("Profile not found")
+
 
 
 
