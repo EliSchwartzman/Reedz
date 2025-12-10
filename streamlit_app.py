@@ -528,8 +528,8 @@ def main_panel():
     else:
         pages = base_pages
         
-    st.sidebar.subheader("Navigation")
-    page = st.sidebar.radio("", pages)
+    st.sidebar.subheader("Navigation")  # Subheader size text
+    page = st.sidebar.radio("Select page", pages, label_visibility="collapsed")
 
 
     # Route to selected page
