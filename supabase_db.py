@@ -1,6 +1,5 @@
 import os  # Environment variable access
 from datetime import datetime, timedelta, timezone
-import streamlit as st  # Date/time handling with timezone support
 from dotenv import load_dotenv      # Load .env configuration file
 from supabase import create_client, Client  # Official Supabase Python client
 from models import User, Bet, Prediction  # Data models for type safety
