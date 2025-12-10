@@ -233,49 +233,42 @@ def bets_panel():
                 st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**{ans_str}")
         else:
             st.info("No resolved bets")
-
+            
 def predictions_panel():
     """View all predictions for a selected bet."""
-    st.subheader("View Predictions for a Bet")  # Biggest header
+    st.subheader("View Predictions for a Bet")
     
-    all_bets = (get_bet_overview("open") + 
-                get_bet_overview("closed") + 
-                get_bet_overview("resolved"))
+    # Get all bets by status
+    open_bets = get_bet_overview("open")
+    closed_bets = get_bet_overview("closed")
+    resolved_bets = get_bet_overview("resolved")
     
-    if not all_bets:
+    if not any([open_bets, closed_bets, resolved_bets]):
         st.info("No bets available")
         return
     
-    # Group bets by status 
-    open_bets = [b for b in all_bets if not b.get('is_closed') and not b.get('is_resolved')]
-    closed_bets = [b for b in all_bets if b.get('is_closed') and not b.get('is_resolved')]
-    resolved_bets = [b for b in all_bets if b.get('is_resolved')]
+    # Category selection
+    categories = []
+    if open_bets: categories.append("Open Bets")
+    if closed_bets: categories.append("Closed Bets") 
+    if resolved_bets: categories.append("Resolved Bets")
     
-    bet_titles = {}
-    options = []
+    category = st.selectbox("Select Category", categories)
     
-    # OPEN BETS 
-    if open_bets:
-        options.append("🟢 OPEN BETS")
-        for b in open_bets:
-            bet_titles[f"  🟢 ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+    # Filter bets by selected category
+    if category == "Open Bets":
+        category_bets = open_bets
+    elif category == "Closed Bets":
+        category_bets = closed_bets
+    else:  # Resolved Bets
+        category_bets = resolved_bets
     
-    # CLOSED BETS 
-    if closed_bets:
-        options.append("🔴 CLOSED BETS")
-        for b in closed_bets:
-            bet_titles[f"  🔴 ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+    # Bet selection within category
+    bet_titles = {f"ID {b['bet_id']} - {b['title']}": b['bet_id'] for b in category_bets}
+    selected_bet = st.selectbox("Select Bet", list(bet_titles.keys()))
     
-    # RESOLVED BETS 
-    if resolved_bets:
-        options.append("⚫ RESOLVED BETS")
-        for b in resolved_bets:
-            bet_titles[f"  ⚫ ID {b['bet_id']} - {b['title']}"] = b['bet_id']
-    
-    selected = st.selectbox("Select Bet", options if options else ["No bets available"])
-    
-    if selected and selected not in ["🟢 OPEN BETS", "🔴 CLOSED BETS", "⚫ RESOLVED BETS"]:
-        bet_id = bet_titles[selected]
+    if selected_bet:
+        bet_id = bet_titles[selected_bet]
         predictions = supabase_db.get_predictions_for_bet(bet_id)
         
         if predictions:
@@ -283,14 +276,14 @@ def predictions_panel():
             user_cache = {}
             pred_data = []
             for p in predictions:
-                user_id = p['user_id']  
+                user_id = p['user_id']
                 if user_id not in user_cache:
                     user = supabase_db.get_user_by_id(user_id)
                     user_cache[user_id] = user.username if user else f"ID {user_id}"
                 
-                pred_data.append({  # FIXED: append() + proper indentation
+                pred_data.append({
                     "User": user_cache[user_id],
-                    "Prediction": p['prediction'],  
+                    "Prediction": p['prediction'],
                     "Created": timestamper.format_et(p['created_at'])
                 })
             
