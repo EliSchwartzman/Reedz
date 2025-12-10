@@ -307,28 +307,40 @@ def get_bets_by_state(state):
         List of bet dictionaries
     """
     # Base query with essential fields
-    """Filter bets by proper lifecycle state logic."""
-    base = (supabase.table('bets')
-            .select('bet_id, created_by_user_id, title, description, answer_type, '
-                   'correct_answer, is_open, is_resolved, is_closed, created_at, '
-                   'close_at, resolved_at'))
-    
-    now_utc = 'now()'  # Current UTC time
-    
-    if state == 'open':
-        # OPEN: accepting predictions (is_open=TRUE)
-        res = base.eq('is_open', True).execute()
-    elif state == 'closed':
-        # CLOSED: closed but not resolved (is_closed=TRUE AND is_resolved=FALSE)
-        res = base.eq('is_closed', True).eq('is_resolved', False).execute()
-    elif state == 'resolved':
-        # RESOLVED: final state (is_resolved=TRUE)
-        res = base.eq('is_resolved', True).execute()
-    else:  # 'all'
-        res = base.execute()
-    
-    return res.data
+    """Filters bets by lifecycle state: open, closed, resolved, or all."""
+    # Auto-close any bets whose close_at is in the past but are still open
+    auto_close_expired_bets()
 
+    bets = supabase.table("bets").select(
+        "bet_id, created_by_user_id, title, description, answer_type, "
+        "correct_answer, is_open, is_resolved, is_closed, created_at, "
+        "close_at, resolved_at"
+    )
+
+    if state == "open":
+        # Open = not closed and not resolved
+        res = (
+            bets
+            .eq("is_closed", False)
+            .eq("is_resolved", False)
+            .execute()
+        )
+    elif state == "closed":
+        # Closed (but not yet resolved)
+        res = (
+            bets
+            .eq("is_closed", True)
+            .eq("is_resolved", False)
+            .execute()
+        )
+    elif state == "resolved":
+        # Resolved = final state
+        res = bets.eq("is_resolved", True).execute()
+    else:
+        # All bets, no state filter
+        res = bets.execute()
+
+    return res.data
 
 def get_bet_overview(state):
     """Alias for get_bets_by_state() - used by UI."""
@@ -343,6 +355,35 @@ def close_bet(bet_id):
            .eq('is_resolved', False)  # Only close unresolved bets
            .execute())
     return res
+
+def auto_close_expired_bets():
+    """Automatically close any bets whose close_at is in the past."""
+    now_utc = datetime.now(timezone.utc)
+
+    res = (
+        supabase.table("bets")
+        .select("bet_id, close_at, is_closed, is_resolved")
+        .eq("is_closed", False)
+        .eq("is_resolved", False)
+        .execute()
+    )
+
+    for b in res.data or []:
+        close_at = b.get("close_at")
+        if not close_at:
+            continue
+
+        try:
+            close_dt = datetime.fromisoformat(close_at)
+        except Exception:
+            continue
+
+        if close_dt.tzinfo is None:
+            close_dt = close_dt.replace(tzinfo=timezone.utc)
+
+        if close_dt <= now_utc:
+            close_bet(b["bet_id"])
+
 
 def resolve_bet(bet_id, correct_answer):
     """Resolve bet: set answer + mark fully resolved."""
