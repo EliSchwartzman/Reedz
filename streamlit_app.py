@@ -528,8 +528,8 @@ def main_panel():
     else:
         pages = base_pages
     
-    st.sidebar.subheader("Navigation")  # Header first
-    page = st.sidebar.radio("", pages)  # Empty label radio
+    Header = st.sidebar.subheader("Navigation")  # Header first
+    page = st.sidebar.radio("Header", pages)  # Empty label radio
 
     # Route to selected page
     page_map = {
