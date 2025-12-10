@@ -307,7 +307,7 @@ def create_bet_panel(user):
                 "Hours until closes",
                 min_value=0,
                 max_value=720,   # up to 30 days
-                value=24
+                value=1
             )
         with col2:
             minutes = st.number_input(
@@ -332,7 +332,7 @@ def create_bet_panel(user):
                 st.success("Bet created successfully")
             except Exception as e:
                 st.error(f"{e}")
-                
+
 
 def place_prediction_panel(user):
     """Place prediction on open bet."""
