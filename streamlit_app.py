@@ -256,7 +256,7 @@ def predictions_panel():
         st.info("No bets available")
         return
     
-    # Group bets by status with BIG headers
+    # Group bets by status 
     open_bets = [b for b in all_bets if not b.get('is_closed') and not b.get('is_resolved')]
     closed_bets = [b for b in all_bets if b.get('is_closed') and not b.get('is_resolved')]
     resolved_bets = [b for b in all_bets if b.get('is_resolved')]
@@ -264,19 +264,19 @@ def predictions_panel():
     bet_titles = {}
     options = []
     
-    # OPEN BETS - BIG header
+    # OPEN BETS 
     if open_bets:
         options.append("OPEN BETS")
         for b in open_bets:
             bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
     
-    # CLOSED BETS - BIG header
+    # CLOSED BETS 
     if closed_bets:
         options.append("CLOSED BETS")
         for b in closed_bets:
             bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
     
-    # RESOLVED BETS - BIG header
+    # RESOLVED BETS 
     if resolved_bets:
         options.append("RESOLVED BETS")
         for b in resolved_bets:
@@ -293,19 +293,21 @@ def predictions_panel():
             user_cache = {}
             pred_data = []
             for p in predictions:
-                user_id = p['user_id']  # Fixed: dict access
+                user_id = p['user_id']  
                 if user_id not in user_cache:
                     user = supabase_db.get_user_by_id(user_id)
                     user_cache[user_id] = user.username if user else f"ID {user_id}"
                 
-                pred_data.append({
-                    "User": user_cache[user_id],
-                    "Prediction": p['prediction'],  # Fixed: dict access
-                    "Created": timestamper.format_et(p['created_at'])  # Fixed: dict access
-                })
+            pred_data.append({
+                "User": user_cache[user_id],
+                "Prediction": p['prediction'],  
+                "Created": timestamper.format_et(p['created_at'])
+            })  # Close dict + loop properly
+
             st.dataframe(pred_data, use_container_width=True)
         else:
             st.info("No predictions for this bet")
+
 
 # ADMIN PANELS (Role-protected)
 
