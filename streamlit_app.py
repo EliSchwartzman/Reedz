@@ -300,15 +300,23 @@ def create_bet_panel(user):
         title = st.text_input("Bet Title")
         description = st.text_area("Description", height=80)
         answer_type = st.selectbox("Answer Type", ["number", "text"])
-        close_days = st.number_input("Days until closes", min_value=0.1, max_value=30, value=1)
+        
+        # Hours + Minutes for precise timing (10min → 30 days)
+        col1, col2 = st.columns(2)
+        with col1:
+            hours = st.number_input("Hours until closes", min_value=0, max_value=720, value=24)
+        with col2:
+            minutes = st.number_input("Minutes until closes", min_value=10, max_value=59, value=0)
         
         if st.button("Create Bet", use_container_width=True):
-            close_at = datetime.now() + timedelta(days=close_days)
+            total_minutes = hours * 60 + minutes
+            close_at = datetime.now() + timedelta(minutes=total_minutes)
             try:
                 create_bet(user, title, description, answer_type, close_at)
                 st.success("Bet created successfully")
             except Exception as e:
                 st.error(f"{e}")
+
 
 def place_prediction_panel(user):
     """Place prediction on open bet."""
