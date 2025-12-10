@@ -529,8 +529,8 @@ def main_panel():
         pages = base_pages
         
     st.sidebar.subheader("Navigation")
-    page = st.sidebar.radio("Go to", pages)
-    
+    page = st.sidebar.radio("", pages)
+
 
     # Route to selected page
     page_map = {
