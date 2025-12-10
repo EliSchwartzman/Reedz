@@ -303,10 +303,10 @@ def create_bet_panel(user):
         
         close_hours = st.number_input(
             "Hours until closes", 
-            min_value=0.17,  # 10 minutes = 0.17 hours
-            max_value=720,   # 30 days = 720 hours
-            value=24.0, 
-            step=0.25,       # 15-minute increments
+            min_value=0.17,    # float
+            max_value=720.0,   # ✅ float
+            value=24.0,        # float
+            step=0.25,         # float
             format="%.2f"
         )
         
@@ -317,6 +317,7 @@ def create_bet_panel(user):
                 st.success("Bet created successfully")
             except Exception as e:
                 st.error(f"{e}")
+
 
 
 
