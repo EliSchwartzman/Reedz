@@ -1,6 +1,6 @@
 import os  # Environment variable access
 from datetime import datetime, timedelta, timezone
-from turtle import st  # Date/time handling with timezone support
+import streamlit as st  # Date/time handling with timezone support
 from dotenv import load_dotenv      # Load .env configuration file
 from supabase import create_client, Client  # Official Supabase Python client
 from models import User, Bet, Prediction  # Data models for type safety
@@ -405,23 +405,16 @@ def has_prediction(user_id, bet_id):
 
 # Reset Function
 def reset_database():
-    try:
-        # 1. Delete predictions
-        supabase.table('predictions').delete().neq('prediction_id', -1).execute()
-                        
-        # 2. Delete bets
-        supabase.table('bets').delete().neq('bet_id', -1).execute()
-                        
-        # 3. Reset balances
-        supabase.table('users').update({'reedz_balance': 0}).neq('user_id', -1).execute()
-                        
-        st.success("**Season reset complete!**")
-        st.balloons()
-                        
-        # Show success for 2 seconds, THEN refresh
-        time.sleep(2)
-        st.rerun()
-                        
-    except Exception as e:
-        st.error(f"Reset failed: {e}")
-                    
+    """Admin utility to wipe bets, predictions, and reset user balances."""
+    # Delete all predictions
+    supabase.table("predictions").delete().neq("prediction_id", 0).execute()
+    
+    # Delete all bets
+    supabase.table("bets").delete().neq("bet_id", 0).execute()
+    
+    # Reset all user Reedz balances to zero
+    supabase.table("users").update({"reedz_balance": 0}).execute()
+    
+    # Small delay to ensure operations complete
+    time.sleep(1)
+    return True
