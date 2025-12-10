@@ -256,25 +256,25 @@ def predictions_panel():
     
     # OPEN BETS 
     if open_bets:
-        options.append("OPEN BETS")
+        options.append("🟢 OPEN BETS")
         for b in open_bets:
-            bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+            bet_titles[f"  🟢 ID {b['bet_id']} - {b['title']}"] = b['bet_id']
     
     # CLOSED BETS 
     if closed_bets:
-        options.append("CLOSED BETS")
+        options.append("🔴 CLOSED BETS")
         for b in closed_bets:
-            bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+            bet_titles[f"  🔴 ID {b['bet_id']} - {b['title']}"] = b['bet_id']
     
     # RESOLVED BETS 
     if resolved_bets:
-        options.append("RESOLVED BETS")
+        options.append("⚫ RESOLVED BETS")
         for b in resolved_bets:
-            bet_titles[f"  ID {b['bet_id']} - {b['title']}"] = b['bet_id']
+            bet_titles[f"  ⚫ ID {b['bet_id']} - {b['title']}"] = b['bet_id']
     
     selected = st.selectbox("Select Bet", options if options else ["No bets available"])
     
-    if selected and selected not in ["OPEN BETS", "CLOSED BETS", "RESOLVED BETS"]:
+    if selected and selected not in ["🟢 OPEN BETS", "🔴 CLOSED BETS", "⚫ RESOLVED BETS"]:
         bet_id = bet_titles[selected]
         predictions = supabase_db.get_predictions_for_bet(bet_id)
         
@@ -288,15 +288,16 @@ def predictions_panel():
                     user = supabase_db.get_user_by_id(user_id)
                     user_cache[user_id] = user.username if user else f"ID {user_id}"
                 
-            pred_data.append({
-                "User": user_cache[user_id],
-                "Prediction": p['prediction'],  
-                "Created": timestamper.format_et(p['created_at'])
-            })  # Close dict + loop properly
-
+                pred_data.append({  # FIXED: append() + proper indentation
+                    "User": user_cache[user_id],
+                    "Prediction": p['prediction'],  
+                    "Created": timestamper.format_et(p['created_at'])
+                })
+            
             st.dataframe(pred_data, use_container_width=True)
         else:
             st.info("No predictions for this bet")
+
 
 
 # ADMIN PANELS (Role-protected)
