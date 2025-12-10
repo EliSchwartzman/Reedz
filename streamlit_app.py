@@ -291,9 +291,6 @@ def predictions_panel():
         else:
             st.info("No predictions for this bet")
 
-
-
-
 # ADMIN PANELS (Role-protected)
 
 def create_bet_panel(user):
@@ -303,7 +300,7 @@ def create_bet_panel(user):
         title = st.text_input("Bet Title")
         description = st.text_area("Description", height=80)
         answer_type = st.selectbox("Answer Type", ["number", "text"])
-        close_days = st.number_input("Days until closes", min_value=1, max_value=30, value=1)
+        close_days = st.number_input("Days until closes", min_value=0.1, max_value=30, value=1)
         
         if st.button("Create Bet", use_container_width=True):
             close_at = datetime.now() + timedelta(days=close_days)
