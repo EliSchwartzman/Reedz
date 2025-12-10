@@ -462,22 +462,9 @@ def user_management_panel():
         if st.button("CONFIRM SEASON RESET", type="primary"):
             with st.spinner("Resetting season..."):
                 try:
-                    # 1. Delete predictions
-                    supabase.table('predictions').delete().neq('prediction_id', -1).execute()
-                    
-                    # 2. Delete bets
-                    supabase.table('bets').delete().neq('bet_id', -1).execute()
-                    
-                    # 3. Reset balances
-                    supabase.table('users').update({'reedz_balance': 0}).neq('user_id', -1).execute()
-                    
-                    st.success("**Season reset complete!**")
+                    supabase_db.reset_season()
+                    st.success("Season reset complete!")
                     st.balloons()
-                    
-                    # Show success for 2 seconds, THEN refresh
-                    time.sleep(2)
-                    st.rerun()
-                    
                 except Exception as e:
                     st.error(f"Reset failed: {e}")
 
