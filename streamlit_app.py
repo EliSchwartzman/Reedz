@@ -527,8 +527,9 @@ def main_panel():
         pages = admin_pages + base_pages
     else:
         pages = base_pages
-    
-    page = st.sidebar.subheader.radio("Navigation")  # Header first
+        
+    st.sidebar.subheader("Navigation")  
+    page = st.sidebar.radio(pages)  
 
     # Route to selected page
     page_map = {
