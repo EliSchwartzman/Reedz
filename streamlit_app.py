@@ -2,7 +2,6 @@ import streamlit as st  # Web framework for interactive data apps
 import re               # Regular expressions for username validation
 from models import User # Data models (User, Bet, Prediction)
 from auth import hash_password, authenticate, is_admin  # Authentication utilities
-import supabase         # Supabase client instance
 from supabase import create_client, Client  # Supabase client creation
 import supabase_db      # Supabase database operations layer
 from betting import create_bet, close_bet, resolve_bet, place_prediction, get_bet_overview  # Betting operations
@@ -13,7 +12,6 @@ from dotenv import load_dotenv  # Load .env configuration
 import random           # Random number generation for reset codes
 import string           # String constants for code generation
 from email_sender import send_password_reset_email  # SMTP email utilities
-import time             # Sleep for delays in UI
 
 # Load secure configuration from environment variables
 load_dotenv()
