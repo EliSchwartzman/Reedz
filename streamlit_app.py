@@ -233,7 +233,7 @@ def bets_panel():
                 st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**{ans_str}")
         else:
             st.info("No resolved bets")
-            
+
 def predictions_panel():
     """View all predictions for a selected bet."""
     st.subheader("View Predictions for a Bet")
@@ -247,7 +247,7 @@ def predictions_panel():
         st.info("No bets available")
         return
     
-    # Category selection
+    # Category selection (only show categories with bets)
     categories = []
     if open_bets: categories.append("Open Bets")
     if closed_bets: categories.append("Closed Bets") 
@@ -290,6 +290,7 @@ def predictions_panel():
             st.dataframe(pred_data, use_container_width=True)
         else:
             st.info("No predictions for this bet")
+
 
 
 
