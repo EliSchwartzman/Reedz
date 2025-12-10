@@ -15,15 +15,9 @@ from email_sender import send_password_reset_email  # SMTP email utilities
 
 # Load secure configuration from environment variables
 load_dotenv()
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 ADMIN_CODE = os.getenv("ADMIN_CODE")  # Secret code for admin privileges
 
-# Validate required environment variables before app startup
-if not SUPABASE_URL or not SUPABASE_KEY:
-    st.error("SUPABASE_URL and SUPABASE_KEY must be set in environment variables.")
-    st.stop()
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Configure Streamlit page (wide layout for better UX)
 st.set_page_config(page_title="Reedz Betting", layout="wide")
