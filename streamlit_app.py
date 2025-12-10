@@ -305,7 +305,7 @@ def create_bet_panel(user):
         with col1:
             hours = st.number_input("Hours until closes", min_value=0, max_value=720, value=24)
         with col2:
-            minutes = st.number_input("Minutes until closes", min_value=1, max_value=59, value=0)
+            minutes = st.number_input("Minutes until closes", min_value=1, max_value=59, value=1)  # ✅ Fixed: value=1
         
         if st.button("Create Bet", use_container_width=True):
             total_minutes = hours * 60 + minutes
@@ -315,6 +315,7 @@ def create_bet_panel(user):
                 st.success("Bet created successfully")
             except Exception as e:
                 st.error(f"{e}")
+
 
 
 
