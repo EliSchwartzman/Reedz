@@ -15,23 +15,20 @@ import string           # String constants for code generation
 from email_sender import send_password_reset_email  # SMTP email utilities
 import time             # Sleep for delays in UI
 
-
 # Load secure configuration from environment variables
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 ADMIN_CODE = os.getenv("ADMIN_CODE")  # Secret code for admin privileges
 
+# Validate required environment variables before app startup
 if not SUPABASE_URL or not SUPABASE_KEY:
     st.error("SUPABASE_URL and SUPABASE_KEY must be set in environment variables.")
     st.stop()
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-
-
 # Configure Streamlit page (wide layout for better UX)
 st.set_page_config(page_title="Reedz Betting", layout="wide")
-
 
 # Initialize session state to track user login and current page
 if "user" not in st.session_state:
@@ -39,13 +36,11 @@ if "user" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "home"  # Navigation state
 
-
 # UTILITY HELPER FUNCTIONS
 
 def generate_reset_code(length=6):
     """Generates random 6-digit numeric code for password resets."""
     return ''.join(random.choices(string.digits, k=length))
-
 
 def set_reset_code_for_email(email):
     """
@@ -66,7 +61,6 @@ def set_reset_code_for_email(email):
     # Send via SMTP email
     success, error_msg = send_password_reset_email(email, code)
     return success, error_msg
-
 
 # AUTHENTICATION PANEL
 
@@ -205,7 +199,6 @@ def auth_panel():
                     for key in ["sent_reset_email", "reset_email_val", "reset_code_sent_to"]:
                         st.session_state[key] = ""
 
-
 # USER INTERFACE PANELS
 
 def leaderboard_panel():
@@ -220,19 +213,18 @@ def leaderboard_panel():
     else:
         st.info("No users yet")
 
-
 def bets_panel():
     """Shows all bets categorized by status (open/closed/resolved)."""
     st.subheader("All Bets")
     open_bets = get_bet_overview("open")
     closed_bets = get_bet_overview("closed")
     resolved_bets = get_bet_overview("resolved")
-        
+    
     with st.expander("**Open Bets (Accepting Predictions)**", expanded=True):
         if open_bets:
             for bet in open_bets:
                 st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**  "
-                        f"*closes {timestamper.format_et(bet['close_at'])}*")
+                            f"*closes {timestamper.format_et(bet['close_at'])}*")
         else:
             st.info("No open bets")
 
@@ -240,7 +232,7 @@ def bets_panel():
         if closed_bets:
             for bet in closed_bets:
                 st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**  "
-                        f"*closed {timestamper.format_et(bet['close_at'])}*")
+                            f"*closed {timestamper.format_et(bet['close_at'])}*")
         else:
             st.info("No closed bets")
 
@@ -249,10 +241,8 @@ def bets_panel():
             for bet in resolved_bets:
                 ans_str = f" | **Answer: {bet.get('correct_answer', 'N/A')}**"
                 st.markdown(f"**ID {bet['bet_id']} | {bet['title']}**{ans_str}")
-
         else:
             st.info("No resolved bets")
-
 
 def predictions_panel():
     """View all predictions for a selected bet."""
@@ -317,8 +307,6 @@ def predictions_panel():
         else:
             st.info("No predictions for this bet")
 
-
-
 # ADMIN PANELS (Role-protected)
 
 def create_bet_panel(user):
@@ -337,7 +325,6 @@ def create_bet_panel(user):
                 st.success("Bet created successfully")
             except Exception as e:
                 st.error(f"{e}")
-
 
 def place_prediction_panel(user):
     """Place prediction on open bet."""
@@ -360,7 +347,6 @@ def place_prediction_panel(user):
             except Exception as e:
                 st.error(f"{e}")
 
-
 def close_bet_panel(user):
     """Admin: Close open bet (stop predictions)."""
     st.subheader("Close Bet")
@@ -380,7 +366,6 @@ def close_bet_panel(user):
                 st.success("Bet closed")
             except Exception as e:
                 st.error(f"{e}")
-
 
 def resolve_bet_panel(user):
     """Admin: Set correct answer and distribute rewards."""
@@ -403,9 +388,8 @@ def resolve_bet_panel(user):
             except Exception as e:
                 st.error(f"{e}")
 
-
 def user_management_panel():
-    """Admin: Full user CRUD operations + Season Reset."""
+    """Admin: Full user CRUD (Create, Read, Update, Delete) operations."""
     st.subheader("User Management")
     action = st.radio("Action", ["List users", "Promote/Demote", "Change Reedz", "Delete user", "Season Reset"])
     
@@ -495,11 +479,6 @@ def user_management_panel():
                 except Exception as e:
                     st.error(f"Reset failed: {e}")
 
-
-
-
-
-
 def profile_panel(user):
     """Display current user's profile information."""
     st.header("My Profile")
@@ -582,7 +561,6 @@ def main_panel():
         page_map[page]()
     else:
        st.error(f"Unknown page: {page}")
-
     
     # Logout button
     st.sidebar.divider()
@@ -590,7 +568,6 @@ def main_panel():
         st.session_state.user = None
         st.session_state.page = "home"
         st.rerun()
-
 
 # APPLICATION ENTRY POINT
 
@@ -600,7 +577,6 @@ def run_app():
         auth_panel()  # Show login/register
     else:
         main_panel()  # Show authenticated dashboard
-
 
 # Streamlit entry point
 if __name__ == "__main__" or st._is_running_with_streamlit:
