@@ -307,14 +307,14 @@ def create_bet_panel(user):
                 "Hours until closes",
                 min_value=0,
                 max_value=720,   # up to 30 days
-                value=1
+                value=1          # default close time: 1 hour
             )
         with col2:
             minutes = st.number_input(
                 "Minutes until closes",
                 min_value=0,
                 max_value=59,
-                value=0
+                value=0            # default close time: 0 minutes
             )
 
         # Ensure at least 1 minute total
