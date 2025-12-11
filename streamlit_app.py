@@ -541,8 +541,9 @@ def main_panel():
 
 
     # Route to selected page
+    # lambda used to pass user where needed
     page_map = {
-        "My Profile": lambda: profile_panel(user),
+        "My Profile": lambda: profile_panel(user), # Links My Profile to profile_panel function.  
         "Leaderboard": leaderboard_panel,
         "All Bets": bets_panel,
         "Place Prediction": lambda: place_prediction_panel(user),
