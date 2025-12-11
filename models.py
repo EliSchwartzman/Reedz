@@ -24,7 +24,7 @@ class User:
         created_at
         ): # __init__ method sets up the User object with its attributes
         
-        self.user_id = user_id              # Primary key (int/None)
+        self.user_id = user_id              # Primary key (int)
         self.username = username            # Unique string identifier
         self.password = password            # bcrypt hash (never plaintext)
         self.email = email                  # Valid email address
