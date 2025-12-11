@@ -34,7 +34,7 @@ def generate_reset_code(length=6):
 
 def set_reset_code_for_email(email):
     """
-    Generates, stores, and emails temporary password reset code (5min expiry).
+    Stores and sends temporary password reset code (5min expiry).
     
     Args:
         email (str): User's registered email address
