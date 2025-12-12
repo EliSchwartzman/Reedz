@@ -450,10 +450,6 @@ def has_prediction(user_id, bet_id):
 
 # Reset Function
 def reset_database():
-    """Admin utility to wipe bets, predictions, and reset user balances."""
-    supabase.table("predictions").delete().neq("prediction_id", 0).execute()
-    supabase.table("bets").delete().neq("bet_id", 0).execute()
-    supabase.table("users").update({"reedz_balance": 0}).neq("user_id", 0).execute()
+    supabase.rpc("reset_season").execute()
     time.sleep(1)
     return True
-
