@@ -409,28 +409,28 @@ def user_management_panel():
         } for u in users], use_container_width=True)
     
     elif action == "Promote/Demote":
-        user_map = {f"{u['username']} (ID {u['user_id']}) – {u['role']}": (u["user_id"], u["role"]) for u in users}
+        user_map = {f"{u['username']} (ID {u['user_id']}) [{u['role']}]": u['user_id'] for u in users}
         selected = st.selectbox("User", list(user_map.keys()))
-        user_id, current_role = user_map[selected]
-        new_role = st.selectbox("New Role", ["Admin", "Member"], index=["Admin", "Member"].index(current_role))
+        uid = user_map[selected]
+        new_role = st.selectbox("New Role", ["Admin", "Member"])
 
-        admin_code = ""
-        if new_role == "Admin" and current_role != "Admin":
-            admin_code = st.text_input("Admin Code", type="password")
+        admin_code_input = ""
+        if new_role == "Admin":
+            admin_code_input = st.text_input("Admin Code", type="password")
 
-        update_btn = st.button("Update Role", key="update_role_btn")
+        update_btn = st.button("Update Role")
 
         if update_btn:
-            if new_role == "Admin" and admin_code != ADMIN_CODE:
+            if new_role == "Admin" and admin_code_input != ADMIN_CODE:
                 st.error("Wrong admin code")
             else:
                 try:
-                    supabase_db.change_role(user_id, new_role)
+                    supabase_db.change_role(uid, new_role)
                     st.success("Role updated")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"{e}")
-    
+                    st.error(f"{e}")    
+        
     elif action == "Change Reedz":
         user_map = {f"{u['username']} (ID {u['user_id']}) [{u['reedz_balance']} Reedz]": u for u in users}
         selected = st.selectbox("User", list(user_map.keys()))
