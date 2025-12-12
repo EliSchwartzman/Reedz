@@ -15,7 +15,6 @@ from email_sender import send_password_reset_email  # SMTP email utilities
 load_dotenv()
 
 ADMIN_CODE = os.getenv("ADMIN_CODE")
-st.write(f"Admin Code (for testing): {ADMIN_CODE}")  # REMOVE in production!
 
 # Single, top-level call
 st.set_page_config(page_title="Reedz Betting", layout="wide")
