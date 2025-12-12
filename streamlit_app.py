@@ -418,7 +418,6 @@ def user_management_panel():
         selected = st.selectbox("User", list(user_map.keys()))
         uid, current_role = user_map[selected]
 
-        # Default new_role to current
         role_options = ["Admin", "Member"]
         new_role = st.selectbox(
             "New Role",
