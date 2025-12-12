@@ -242,6 +242,10 @@ def get_leaderboard():
     ).execute()
     return res.data
 
+def change_role(user_id, new_role):
+    """Updates user role (Admin/Member)."""
+    return supabase.table("users").update({"role": new_role}).eq("user_id", user_id).execute()
+
 # BET OPERATIONS
 
 def create_bet(bet: Bet):

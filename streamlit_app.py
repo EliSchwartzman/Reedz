@@ -409,20 +409,31 @@ def user_management_panel():
         } for u in users], use_container_width=True)
     
     elif action == "Promote/Demote":
-        user_map = {f"{u['username']} (ID {u['user_id']}) [{u['role']}]": u['user_id'] for u in users}
+        # Map label → (user_id, current_role)
+        user_map = {
+            f"{u['username']} (ID {u['user_id']}) [{u['role']}]": (u["user_id"], u["role"])
+            for u in users
+        }
         selected = st.selectbox("User", list(user_map.keys()))
-        uid = user_map[selected]
-        new_role = st.selectbox("New Role", ["Admin", "Member"])
+        uid, current_role = user_map[selected]
+
+        # Default new_role to current
+        role_options = ["Admin", "Member"]
+        new_role = st.selectbox(
+            "New Role",
+            role_options,
+            index=role_options.index(current_role) if current_role in role_options else 1,
+        )
 
         admin_code_input = ""
-        if new_role == "Admin":
+        if new_role == "Admin" and current_role != "Admin":
             admin_code_input = st.text_input("Admin Code", type="password")
 
-        update_btn = st.button("Update Role")
+        update_btn = st.button("Update Role", key="update_role_btn")
 
         if update_btn:
-            # If promoting to Admin, verify code
-            if new_role == "Admin" and admin_code_input != ADMIN_CODE:
+            # If promoting to Admin, require correct admin code
+            if new_role == "Admin" and current_role != "Admin" and admin_code_input != ADMIN_CODE:
                 st.error("Wrong admin code")
             else:
                 try:
@@ -431,7 +442,7 @@ def user_management_panel():
                     st.rerun()
                 except Exception as e:
                     st.error(f"{e}")
-                    
+                        
         
     elif action == "Change Reedz":
         user_map = {f"{u['username']} (ID {u['user_id']}) [{u['reedz_balance']} Reedz]": u for u in users}
