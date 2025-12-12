@@ -450,6 +450,16 @@ def has_prediction(user_id, bet_id):
 
 # Reset Function
 def reset_database():
+    """Admin utility to wipe bets, predictions, and reset user balances.
+
+    Requires a Postgres function `reset_season()` that:
+      - DELETEs FROM predictions and bets
+      - UPDATEs users SET reedz_balance = 0
+      - ALTER SEQUENCE bets_bet_id_seq RESTART WITH 1;
+      - ALTER SEQUENCE predictions_prediction_id_seq RESTART WITH 1;
+    """
+    # Let the database own the whole season reset
     supabase.rpc("reset_season").execute()
     time.sleep(1)
     return True
+
