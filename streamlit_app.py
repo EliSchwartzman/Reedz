@@ -14,7 +14,7 @@ from email_sender import send_password_reset_email  # SMTP email utilities
 
 load_dotenv()
 
-ADMIN_CODE = os.getenv("ADMIN_CODE")
+ADMIN_CODE = os.getenv("ADMIN_CODE") or st.secrets.get("ADMIN_CODE")
 
 # Single, top-level call
 st.set_page_config(page_title="Reedz Betting", layout="wide")
