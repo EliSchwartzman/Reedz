@@ -462,17 +462,17 @@ def user_management_panel():
             except Exception as e:
                 st.error(f"{e}")
     
-        elif action == "Season Reset":
-            st.warning("SEASON RESET deletes ALL bets & predictions. Users preserved. This operation is irreversible.")
-            if st.button("CONFIRM SEASON RESET", type="primary"):
-                with st.spinner("Resetting season..."):
-                    try:
-                        supabase_db.reset_database()
-                        st.success("Season reset complete!")
-                        st.balloons()
-                    except Exception as e:
-                        st.error(f"Reset failed: {e}")
-
+    elif action == "Season Reset":
+        st.warning("SEASON RESET Deletes ALL bets & predictions. Users preserved. This operation is irreversible.")
+        if st.button("CONFIRM SEASON RESET", type="primary"):
+            with st.spinner("Resetting season..."):
+                try:
+                    supabase_db.reset_database()   # or reset_season() if you renamed it
+                    st.success("Season reset complete!")
+                    st.balloons()
+                except Exception as e:
+                    st.error(f"Reset failed: {e}")
+                    
 def profile_panel(user):
     """Display current user's profile information."""
     st.header("My Profile")
