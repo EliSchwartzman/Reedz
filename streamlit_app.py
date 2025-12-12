@@ -429,7 +429,7 @@ def user_management_panel():
             admin_code_input = st.text_input("Admin Code", type="password")
 
         update_btn = st.button("Update Role", key="update_role_btn")
-        st.write(f"DEBUG input={repr(admin_code_input)}, env={repr(ADMIN_CODE)}")
+        st.write(f"DEBUG input={repr(admin_code_input)}, env={repr(ADMIN_CODE)}, streamlit={repr(st.secrets.get('ADMIN_CODE'))}")  # REMOVE in production!
 
         if update_btn:
             # If promoting to Admin, require correct admin code
