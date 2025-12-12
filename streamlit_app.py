@@ -249,9 +249,12 @@ def predictions_panel():
     
     # Category selection (only show categories with bets)
     categories = []
-    if open_bets: categories.append("Open Bets")
-    if closed_bets: categories.append("Closed Bets") 
-    if resolved_bets: categories.append("Resolved Bets")
+    if open_bets:
+        categories.append("Open Bets")
+    if closed_bets:
+        categories.append("Closed Bets")
+    if resolved_bets:
+        categories.append("Resolved Bets")
     
     category = st.selectbox("Select Category", categories)
     
@@ -273,30 +276,25 @@ def predictions_panel():
         
         if predictions:
             # Cache users to avoid N+1 queries
-            predictions = supabase_db.get_predictions_for_bet(bet_id)
-            if predictions:
-                user_cache = {}
-                pred_data = []
-                for p in predictions:
-                    user_id = p.user_id
-                    if user_id not in user_cache:
-                        user = supabase_db.get_user_by_id(user_id)
-                        user_cache[user_id] = user.username if user else f"ID {user_id}"
+            user_cache = {}
+            pred_data = []
+            for p in predictions:
+                user_id = p.user_id
+                if user_id not in user_cache:
+                    user = supabase_db.get_user_by_id(user_id)
+                    user_cache[user_id] = user.username if user else f"ID {user_id}"
 
-                    pred_data.append({
-                        "User": user_cache[user_id],
-                        "Prediction": p.prediction,
-                        "Created": timestamper.format_et(p.created_at),
-                    })
-                st.dataframe(pred_data, use_container_width=True)
-            else:
-                st.info("No predictions for this bet")
+                pred_data.append({
+                    "User": user_cache[user_id],
+                    "Prediction": p.prediction,
+                    "Created": timestamper.format_et(p.created_at),
+                })
 
-
-            
+            # Single table
             st.dataframe(pred_data, use_container_width=True)
         else:
             st.info("No predictions for this bet")
+
 
 # ADMIN PANELS (Role-protected)
 
