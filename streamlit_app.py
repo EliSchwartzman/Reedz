@@ -439,22 +439,14 @@ def user_management_panel():
         update_btn = st.button("Update Role", key="update_role_btn")
 
         if update_btn:
-            # OPTIONAL: one last debug
-            # st.write(f"DEBUG input={repr(admin_code_input)}, env={repr(ADMIN_CODE)}")
-
             if new_role == "Admin" and current_role != "Admin" and admin_code_input != ADMIN_CODE:
                 st.error("Wrong admin code")
             else:
-                try:
-                    supabase_db.change_role(uid, new_role)
-                    st.success("Role updated")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"{e}")
+                supabase_db.change_role(uid, new_role)
+                st.success("Role updated")
+                st.rerun()
 
 
-                        
-        
     elif action == "Change Reedz":
         user_map = {f"{u['username']} (ID {u['user_id']}) [{u['reedz_balance']} Reedz]": u for u in users}
         selected = st.selectbox("User", list(user_map.keys()))
