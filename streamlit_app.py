@@ -277,16 +277,18 @@ def predictions_panel():
             user_cache = {}
             pred_data = []
             for p in predictions:
-                user_id = p['user_id']
+                user_id = p.user_id
                 if user_id not in user_cache:
                     user = supabase_db.get_user_by_id(user_id)
                     user_cache[user_id] = user.username if user else f"ID {user_id}"
-                
+
                 pred_data.append({
                     "User": user_cache[user_id],
                     "Prediction": p.prediction,
-                    "Created": timestamper.format_et(p.created_at)
+                    "Created": timestamper.format_et(p.created_at),
                 })
+
+
             
             st.dataframe(pred_data, use_container_width=True)
         else:
