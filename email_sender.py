@@ -15,7 +15,14 @@ def send_password_reset_email(email, code):
     smtp_host = st.secrets.get("SMTP_HOST") or os.getenv("SMTP_HOST", "smtp.gmail.com")
     smtp_port = int(st.secrets.get("SMTP_PORT") or os.getenv("SMTP_PORT", "465"))
 
-    print("DEBUG SMTP:", from_addr, smtp_host, smtp_port, "pass_len:", len(password) if password else None)
+    print(
+        "DEBUG SMTP:",
+        from_addr,
+        smtp_host,
+        smtp_port,
+        "pass_len:",
+        len(password) if password else None,
+    )
 
     to_addr = email  # Destination email
 
