@@ -282,8 +282,8 @@ def predictions_panel():
                 
                 pred_data.append({
                     "User": user_cache[user_id],
-                    "Prediction": p['prediction'],
-                    "Created": timestamper.format_et(p['created_at'])
+                    "Prediction": p.prediction,
+                    "Created": timestamper.format_et(p.created_at)
                 })
             
             st.dataframe(pred_data, use_container_width=True)
@@ -472,7 +472,7 @@ def user_management_panel():
                     st.balloons()
                 except Exception as e:
                     st.error(f"Reset failed: {e}")
-                    
+
 def profile_panel(user):
     """Display current user's profile information."""
     st.header("My Profile")
