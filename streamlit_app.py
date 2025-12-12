@@ -15,6 +15,8 @@ from email_sender import send_password_reset_email  # SMTP email utilities
 # Load secure configuration from environment variables
 load_dotenv()
 ADMIN_CODE = os.getenv("ADMIN_CODE")  # Secret code for admin privileges
+st.write(f"DEBUG ADMIN_CODE: {repr(ADMIN_CODE)}")
+
 
 # Configure Streamlit page (wide layout for better UX)
 st.set_page_config(page_title="Reedz Betting", layout="wide")
