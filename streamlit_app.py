@@ -13,7 +13,7 @@ import string           # String constants for code generation
 from email_sender import send_password_reset_email  # SMTP email utilities
 from pathlib import Path  # File path manipulations
 
-load_dotenv()  # looks for .env in the current working directory and parents
+load_dotenv()  # looks for .env in current dir / parents
 
 ADMIN_CODE = os.getenv("ADMIN_CODE") or st.secrets.get("ADMIN_CODE")
 
@@ -417,6 +417,7 @@ def user_management_panel():
         } for u in users], use_container_width=True)
     
     elif action == "Promote/Demote":
+        # Map label → (user_id, current_role)
         user_map = {
             f"{u['username']} (ID {u['user_id']}) [{u['role']}]": (u["user_id"], u["role"])
             for u in users
@@ -438,6 +439,9 @@ def user_management_panel():
         update_btn = st.button("Update Role", key="update_role_btn")
 
         if update_btn:
+            # OPTIONAL: one last debug
+            # st.write(f"DEBUG input={repr(admin_code_input)}, env={repr(ADMIN_CODE)}")
+
             if new_role == "Admin" and current_role != "Admin" and admin_code_input != ADMIN_CODE:
                 st.error("Wrong admin code")
             else:
@@ -447,6 +451,7 @@ def user_management_panel():
                     st.rerun()
                 except Exception as e:
                     st.error(f"{e}")
+
 
                         
         
