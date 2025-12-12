@@ -1,6 +1,6 @@
 import streamlit as st  # Web framework for interactive data apps
 import re               # Regular expressions for username validation
-from models import User # Data models (User, Bet, Prediction)
+from models import User # Data models (User)
 from auth import hash_password, authenticate, is_admin  # Authentication utilities
 import supabase_db      # Supabase database operations layer
 from betting import create_bet, close_bet, resolve_bet, place_prediction, get_bet_overview  # Betting operations

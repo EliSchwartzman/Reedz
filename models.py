@@ -67,7 +67,7 @@ class Bet:
     """
     Betting market/prediction event managed by admins.
     
-    Complete lifecycle: open → closed → resolved → archived.
+    Complete lifecycle: open → closed → resolved.
     
     Fields:
         bet_id: Unique database identifier

@@ -398,6 +398,7 @@ def resolve_bet(bet_id, correct_answer):
            .eq('bet_id', bet_id)
            .execute())
     return res
+
 # PREDICTION OPERATIONS
 
 def create_prediction(prediction: Prediction):
@@ -444,13 +445,13 @@ def has_prediction(user_id, bet_id):
 
 
 # Reset Function
-def reset_database():
+def reset_season():
     """Admin utility to wipe bets, predictions, and reset user balances."""
     # Delete all predictions
-    supabase.table("predictions").delete().neq("prediction_id", 0).execute()
+    supabase.table("predictions").delete().neq("prediction_id", -1).execute()
     
     # Delete all bets
-    supabase.table("bets").delete().neq("bet_id", 0).execute()
+    supabase.table("bets").delete().neq("bet_id", -1).execute()
     
     # Reset all user Reedz balances to zero
     supabase.table("users").update({"reedz_balance": 0}).execute()
