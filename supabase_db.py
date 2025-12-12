@@ -445,17 +445,16 @@ def has_prediction(user_id, bet_id):
 
 
 # Reset Function
-def reset_season():
+def reset_database():
     """Admin utility to wipe bets, predictions, and reset user balances."""
     # Delete all predictions
-    supabase.table("predictions").delete().neq("prediction_id", -1).execute()
-    
+    supabase.table("predictions").delete().neq("prediction_id", 0).execute()
+
     # Delete all bets
-    supabase.table("bets").delete().neq("bet_id", -1).execute()
-    
-    # Reset all user Reedz balances to zero
-    supabase.table("users").update({"reedz_balance": 0}).execute()
-    
-    # Small delay to ensure operations complete
+    supabase.table("bets").delete().neq("bet_id", 0).execute()
+
+    # Reset all users' Reedz balances to zero
+    supabase.table("users").update({"reedz_balance": 0}).neq("user_id", 0).execute()
+
     time.sleep(1)
     return True
