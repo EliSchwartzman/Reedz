@@ -11,8 +11,10 @@ from dotenv import load_dotenv  # Load .env configuration
 import random           # Random number generation for reset codes
 import string           # String constants for code generation
 from email_sender import send_password_reset_email  # SMTP email utilities
+from pathlib import Path  # File path manipulations
 
-load_dotenv()
+ENV_PATH = Path(r"C:\Users\elisc\OneDrive - University of Maryland\Desktop\Reedz\.env")
+load_dotenv(dotenv_path=ENV_PATH)
 
 ADMIN_CODE = os.getenv("ADMIN_CODE") or st.secrets.get("ADMIN_CODE")
 
@@ -429,7 +431,7 @@ def user_management_panel():
             admin_code_input = st.text_input("Admin Code", type="password")
 
         update_btn = st.button("Update Role", key="update_role_btn")
-        st.write(f"DEBUG input={repr(admin_code_input)}, env={repr(ADMIN_CODE)}, streamlit={repr(st.secrets.get('ADMIN_CODE'))}")  # REMOVE in production!
+        st.write(f"DEBUG env={repr(ADMIN_CODE)}")  # temporary
 
         if update_btn:
             # If promoting to Admin, require correct admin code
