@@ -430,6 +430,9 @@ def user_management_panel():
                     st.rerun()
                 except Exception as e:
                     st.error(f"{e}")    
+                    st.write(f"DEBUG ADMIN_CODE: {repr(ADMIN_CODE)}")
+
+                    
         
     elif action == "Change Reedz":
         user_map = {f"{u['username']} (ID {u['user_id']}) [{u['reedz_balance']} Reedz]": u for u in users}
