@@ -13,8 +13,7 @@ import string           # String constants for code generation
 from email_sender import send_password_reset_email  # SMTP email utilities
 from pathlib import Path  # File path manipulations
 
-ENV_PATH = Path(r"C:\Users\elisc\OneDrive - University of Maryland\Desktop\Reedz\.env")
-load_dotenv(dotenv_path=ENV_PATH)
+load_dotenv()  # looks for .env in the current working directory and parents
 
 ADMIN_CODE = os.getenv("ADMIN_CODE") or st.secrets.get("ADMIN_CODE")
 
@@ -274,19 +273,24 @@ def predictions_panel():
         
         if predictions:
             # Cache users to avoid N+1 queries
-            user_cache = {}
-            pred_data = []
-            for p in predictions:
-                user_id = p.user_id
-                if user_id not in user_cache:
-                    user = supabase_db.get_user_by_id(user_id)
-                    user_cache[user_id] = user.username if user else f"ID {user_id}"
+            predictions = supabase_db.get_predictions_for_bet(bet_id)
+            if predictions:
+                user_cache = {}
+                pred_data = []
+                for p in predictions:
+                    user_id = p.user_id
+                    if user_id not in user_cache:
+                        user = supabase_db.get_user_by_id(user_id)
+                        user_cache[user_id] = user.username if user else f"ID {user_id}"
 
-                pred_data.append({
-                    "User": user_cache[user_id],
-                    "Prediction": p.prediction,
-                    "Created": timestamper.format_et(p.created_at),
-                })
+                    pred_data.append({
+                        "User": user_cache[user_id],
+                        "Prediction": p.prediction,
+                        "Created": timestamper.format_et(p.created_at),
+                    })
+                st.dataframe(pred_data, use_container_width=True)
+            else:
+                st.info("No predictions for this bet")
 
 
             
@@ -413,7 +417,6 @@ def user_management_panel():
         } for u in users], use_container_width=True)
     
     elif action == "Promote/Demote":
-        # Map label → (user_id, current_role)
         user_map = {
             f"{u['username']} (ID {u['user_id']}) [{u['role']}]": (u["user_id"], u["role"])
             for u in users
@@ -433,10 +436,8 @@ def user_management_panel():
             admin_code_input = st.text_input("Admin Code", type="password")
 
         update_btn = st.button("Update Role", key="update_role_btn")
-        st.write(f"DEBUG env={repr(ADMIN_CODE)}")  # temporary
 
         if update_btn:
-            # If promoting to Admin, require correct admin code
             if new_role == "Admin" and current_role != "Admin" and admin_code_input != ADMIN_CODE:
                 st.error("Wrong admin code")
             else:
@@ -446,6 +447,7 @@ def user_management_panel():
                     st.rerun()
                 except Exception as e:
                     st.error(f"{e}")
+
                         
         
     elif action == "Change Reedz":
@@ -477,11 +479,11 @@ def user_management_panel():
                 st.error(f"{e}")
     
     elif action == "Season Reset":
-        st.warning("SEASON RESET Deletes ALL bets & predictions. Users preserved. This operation is irreversible.")
+        st.warning("**SEASON RESET**: Deletes ALL bets + predictions. Users preserved. This operation is irreversible.")
         if st.button("CONFIRM SEASON RESET", type="primary"):
             with st.spinner("Resetting season..."):
                 try:
-                    supabase_db.reset_database()   # or reset_season() if you renamed it
+                    supabase_db.reset_database()
                     st.success("Season reset complete!")
                     st.balloons()
                 except Exception as e:
