@@ -421,6 +421,7 @@ def user_management_panel():
         update_btn = st.button("Update Role")
 
         if update_btn:
+            # If promoting to Admin, verify code
             if new_role == "Admin" and admin_code_input != ADMIN_CODE:
                 st.error("Wrong admin code")
             else:
@@ -429,9 +430,7 @@ def user_management_panel():
                     st.success("Role updated")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"{e}")    
-                    st.write(f"DEBUG ADMIN_CODE: {repr(ADMIN_CODE)}")
-
+                    st.error(f"{e}")
                     
         
     elif action == "Change Reedz":
