@@ -1,20 +1,31 @@
-# .github/workflows/keep_alive_simple.yml
-name: Simple Streamlit Ping
+# .github/workflows/wake_up.yml
+name: Wake Streamlit App (Selenium Probe)
 
 on:
   schedule:
+    # Run every 10 hours (0, 10, 20 UTC) to reliably prevent hibernation (12-hour limit)
     - cron: '0 */10 * * *'
+  # Allows manual testing via the GitHub Actions UI
   workflow_dispatch: 
 
 jobs:
-  ping:
+  wake_up:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Debug and Send keep-alive request
-        # 1. Print a dummy message to confirm the secret is loaded (will show **** for security)
-        # 2. Use a multi-line script to run the curl command
-        run: |
-          echo "Attempting ping of: ${{ secrets.STREAMLIT_APP_URL }}"
-          curl -s -f -L -k -o /dev/null "${{ secrets.STREAMLIT_APP_URL }}"
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          # Use Python 3.10 for consistency and compatibility
+          python-version: '3.10' 
+          
+      - name: Install Python Dependencies
+        # Installs selenium and webdriver-manager from the requirements.txt file
+        run: pip install -r requirements.txt
+        
+      - name: Run Streamlit Wake-up Script
+        env:
+          # Use the environment-specific secret reference that you found works for you
+          STREAMLIT_APP_URL: $ {{ secrets.STREAMLIT_APP_URL }} 
+        run: python wake_up_script.py

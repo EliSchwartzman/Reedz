@@ -1,6 +1,3 @@
-# This file is not included or discussed as a part of the project and should be ignored.
-# This file is a modification independent of the project to wake up a Streamlit app.
-
 # wake_up_script.py
 import os
 from selenium import webdriver
@@ -19,14 +16,14 @@ def wake_up_app(url):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--remote-debugging-pipe") 
 
+    # Initializes Chrome driver with the necessary options
     driver = webdriver.Chrome(options=options)
     print(f"Attempting to visit: {url}")
     
     try:
         driver.get(url)
         
-        # Check if the "Yes, get this app back up" button is present
-        # Streamlit uses this text when the app is hibernating
+        # Wait up to 30 seconds for the "Wake Up" button to appear (if hibernating)
         wait = WebDriverWait(driver, 30) 
         button = wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(.,'Yes, get this app back up')]")))
         
@@ -38,14 +35,15 @@ def wake_up_app(url):
         wait.until(EC.invisibility_of_element_located((By.XPATH, "//button[contains(.,'Yes, get this app back up')]")))
         
     except Exception as e:
+        # This branch runs if the app is already awake (button not found) or if a general error occurred.
         print(f"App was likely already awake, or failed to wake. Error: {e}")
         
     finally:
         driver.quit()
-        print("Script finished.")
+        print("Script finished. Driver closed.")
 
 if __name__ == "__main__":
     if STREAMLIT_URL:
         wake_up_app(STREAMLIT_URL)
     else:
-        print("STREAMLIT_APP_URL environment variable is not set.")
+        print("ERROR: STREAMLIT_APP_URL environment variable is not set.")
