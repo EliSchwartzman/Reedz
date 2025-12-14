@@ -28,4 +28,4 @@ jobs:
         env:
           # Use the environment-specific secret reference that you found works for you
           STREAMLIT_APP_URL: $ {{ secrets.STREAMLIT_APP_URL }} 
-        run: python wake_up_script.py
+        run: python wake_up.py
