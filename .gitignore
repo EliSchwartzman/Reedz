@@ -12,3 +12,6 @@ venv/
 # IDE
 .vscode/
 .idea/
+
+# Copy of VS Code files
+Copy of VSCode Files/
