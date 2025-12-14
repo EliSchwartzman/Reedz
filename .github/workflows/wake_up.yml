@@ -13,6 +13,6 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Send keep-alive request
-        # FIX: Access the secret directly within the 'run' command
-        # This bypasses any shell variable assignment issues.
+        # 🚨 FINAL FIX: REMOVE the 'env:' block and access the secret directly
+        # The secret value is inserted directly here and is double-quoted.
         run: curl -s -o /dev/null "${{ secrets.STREAMLIT_APP_URL }}"
