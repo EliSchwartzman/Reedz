@@ -1,4 +1,4 @@
-# .github/workflows/wake_up.yml
+# .github/workflows/keep_alive_simple.yml
 name: Simple Streamlit Ping
 
 on:
@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Send keep-alive request
-        env:
-          STREAMLIT_APP_URL: $ {{ secrets.STREAMLIT_APP_URL }} 
-        # FIX: Added double quotes around the environment variable
-        run: curl -s -o /dev/null "$STREAMLIT_APP_URL"
+        # FIX: Access the secret directly within the 'run' command
+        # This bypasses any shell variable assignment issues.
+        run: curl -s -o /dev/null "${{ secrets.STREAMLIT_APP_URL }}"
