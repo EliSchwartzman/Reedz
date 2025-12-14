@@ -1,0 +1,17 @@
+# .github/workflows/keep_alive_simple.yml
+name: Simple Streamlit Ping
+
+on:
+  schedule:
+    - cron: '0 */10 * * *'
+  workflow_dispatch: 
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send keep-alive request
+        env:
+          STREAMLIT_APP_URL: $ {{ secrets.STREAMLIT_APP_URL }} 
+        run: curl -s -o /dev/null $STREAMLIT_APP_URL
