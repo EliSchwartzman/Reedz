@@ -3,7 +3,6 @@ name: Simple Streamlit Ping
 
 on:
   schedule:
-    # Runs every 10 hours
     - cron: '0 */10 * * *'
   workflow_dispatch: 
 
@@ -13,7 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Send keep-alive request
-        # FIX: The secret value is now accessed directly within the 'run' command.
-        # This resolves shell variable loading issues that caused 'Exit Code 3'.
-        run: curl -s -o /dev/null "${{ secrets.STREAMLIT_APP_URL }}"
+      - name: Debug and Send keep-alive request
+        # 1. Print a dummy message to confirm the secret is loaded (will show **** for security)
+        # 2. Use a multi-line script to run the curl command
+        run: |
+          echo "Attempting ping of: ${{ secrets.STREAMLIT_APP_URL }}"
+          curl -s -f -L -k -o /dev/null "${{ secrets.STREAMLIT_APP_URL }}"
