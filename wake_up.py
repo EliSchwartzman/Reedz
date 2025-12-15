@@ -40,7 +40,7 @@ def wake_up_app(url):
         print(f"App was likely already awake, or failed to wake. Error: {e}")
         
     finally:
-        # 🔑 KEY CHANGE: Add a sleep to increase the session duration 
+        # KEY CHANGE: Add a sleep to increase the session duration 
         # This gives Streamlit's analytics time to fully register the user session.
         print("Pausing for 15 seconds to ensure session registration in analytics...")
         time.sleep(15) 
