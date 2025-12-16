@@ -35,7 +35,6 @@ jobs:
       # Step 4: Run the wake-up script
       - name: Run Streamlit Wake-up Script
         env:
-          # *** CRITICAL FIX: Correct syntax for referencing a GitHub Secret ***
           # This variable must be set as a Secret named 'STREAMLIT_APP_URL'
           # in your repository settings (Settings -> Secrets and variables -> Actions).
           STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }} 
