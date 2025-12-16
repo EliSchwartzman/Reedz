@@ -2,30 +2,41 @@
 name: Wake Streamlit App (Selenium Probe)
 
 on:
+  # Schedule to run every 10 hours (0, 10, 20 UTC)
+  # This prevents the app from hitting the 12-hour hibernation limit.
   schedule:
-    # Run every 10 hours (0, 10, 20 UTC) to reliably prevent hibernation (12-hour limit)
     - cron: '0 */10 * * *'
+  
   # Allows manual testing via the GitHub Actions UI
   workflow_dispatch: 
 
 jobs:
   wake_up:
+    # Use a standard Ubuntu runner
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
+      # Step 1: Check out the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
       
+      # Step 2: Set up the Python environment
       - name: Set up Python Environment
         uses: actions/setup-python@v5
         with:
-          # Use Python 3.10 for consistency and compatibility
+          # Match the version used for your script's development
           python-version: '3.10' 
           
+      # Step 3: Install dependencies (Selenium and webdriver-manager)
       - name: Install Python Dependencies
-        # Installs selenium and webdriver-manager from the requirements.txt file
+        # This assumes your requirements.txt contains 'selenium' and 'webdriver-manager'
         run: pip install -r requirements.txt
         
+      # Step 4: Run the wake-up script
       - name: Run Streamlit Wake-up Script
         env:
-          # Use the environment-specific secret reference that you found works for you
-          STREAMLIT_APP_URL: $ {{ secrets.STREAMLIT_APP_URL }} 
+          # *** CRITICAL FIX: Correct syntax for referencing a GitHub Secret ***
+          # This variable must be set as a Secret named 'STREAMLIT_APP_URL'
+          # in your repository settings (Settings -> Secrets and variables -> Actions).
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }} 
         run: python wake_up.py
