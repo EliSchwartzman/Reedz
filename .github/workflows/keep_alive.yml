@@ -1,0 +1,22 @@
+name: Supabase Stay Awake
+on:
+  schedule:
+    - cron: '0 0 */5 * *' # Runs every 5 days at midnight
+  workflow_dispatch:      # Manual trigger for testing
+
+jobs:
+  keep_alive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install supabase
+      - name: Run keep-alive script
+        env:
+            SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+            SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python supabase_ping.py
