@@ -1,25 +1,28 @@
 import os
 from supabase import create_client
 
-# Load from environment variables (GitHub Secrets)
+# Explicitly pulling from environment variables
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_KEY")
+
+# Safety check: print helpful error if variables are missing
+if not url or not key:
+    raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY environment variables")
+
 supabase = create_client(url, key)
 
 def keep_alive():
     try:
-        # 1. Insert a dummy row (Assuming you have a 'keep_alive' table)
-        # If you don't have a table, see the SQL note below.
-        data, count = supabase.table("keep_alive").insert({"status": "ping"}).execute()
+        # Action: Insert a dummy row
+        # Ensure you created the 'keep_alive' table in Supabase first
+        supabase.table("keep_alive").insert({"status": "ping"}).execute()
         print("Successfully inserted ping row.")
 
-        # 2. Delete the row to keep the database clean
-        # This deletes all rows where status is 'ping'
+        # Action: Delete the row to clean up
         supabase.table("keep_alive").delete().eq("status", "ping").execute()
         print("Successfully cleaned up ping rows.")
-        
     except Exception as e:
-        print(f"Error during keep-alive: {e}")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     keep_alive()
